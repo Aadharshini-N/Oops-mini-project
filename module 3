@@ -1,0 +1,42 @@
+package aaa;
+
+import java.util.List;
+
+public class Module3<T extends User> extends Thread {
+    private T participant;
+    private Exam exam;
+
+    public Module3(T participant, Exam exam) {
+        this.participant = participant;
+        this.exam = exam;
+    }
+
+    @Override
+    public void run() {
+        System.out.println("🧑 " + participant.username + " started the exam...");
+        List<Question> questions = exam.getQuestions();
+        for (Question q : questions) {
+            q.display();
+            q.checkAnswer(1); // Simulated answer
+        }
+        System.out.println("✅ " + participant.username + " completed the exam!");
+    }
+
+    public static void main(String[] args) {
+        // Create exam and add questions
+        Exam exam = new Exam();
+        exam.addQuestion(new Question("Java is:", new String[]{"Language", "OS"}, 1));
+
+        // Create students
+        Student s1 = new Student("Aadhu", "pass", 101);
+        Student s2 = new Student("Ram", "pass", 102);
+
+        // Create threads for each student
+        Module3<Student> t1 = new Module3<>(s1, exam);
+        Module3<Student> t2 = new Module3<>(s2, exam);
+
+        // Start both threads
+        t1.start();
+        t2.start();
+    }
+}
