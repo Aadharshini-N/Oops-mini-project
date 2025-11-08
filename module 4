@@ -1,0 +1,64 @@
+package aaa;
+
+import java.rmi.*;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
+import java.sql.*;
+
+// RMI Server + MySQL integration
+public class Module4 extends UnicastRemoteObject implements ExamRemote {
+    private static final long serialVersionUID = 1L;
+
+    protected Module4() throws RemoteException {
+        super();
+    }
+
+    @Override
+    public String saveResult(String username, int score) throws RemoteException {
+        try (Connection con = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/ExamDB?useSSL=false&serverTimezone=UTC",
+                "root", "Aadhu2006");
+             PreparedStatement ps = con.prepareStatement(
+                     "INSERT INTO results (username, score) VALUES (?, ?)")) {
+
+            ps.setString(1, username);
+            ps.setInt(2, score);
+            ps.executeUpdate();
+            return "✅ Result saved for " + username;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "❌ Database error: " + e.getMessage();
+        }
+    }
+
+    public static void main(String[] args) {
+        try {
+            // ✅ Try connecting to an existing registry
+            Registry registry;
+            try {
+                registry = LocateRegistry.getRegistry(1099);
+                registry.list(); // test if it’s alive
+                System.out.println("⚠️ RMI registry already running on port 1099");
+            } catch (RemoteException e) {
+                System.out.println("🔄 No registry found — starting a new one on port 1099...");
+                registry = LocateRegistry.createRegistry(1099);
+                System.out.println("✅ RMI registry started on port 1099");
+            }
+
+            // Create server and bind it
+            Module4 server = new Module4();
+            Naming.rebind("rmi://localhost:1099/ExamService", server);
+            System.out.println("🚀 ExamService bound and ready for clients...");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+// ✅ Remote interface
+interface ExamRemote extends Remote {
+    String saveResult(String username, int score) throws RemoteException;
+}
