@@ -1,0 +1,34 @@
+package aaa;
+
+import java.io.*;
+
+public class Module2 {
+
+    public static void saveText(String filename, String text) {
+        try (FileWriter fw = new FileWriter(filename, true)) {
+            fw.write(text + "\n");
+            System.out.println("✅ Data saved to " + filename);
+        } catch (IOException e) {
+            System.err.println("❌ Error writing to file: " + e.getMessage());
+        }
+    }
+
+    public static void readText(String filename) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            System.out.println("📖 File content:");
+            String line;
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("⚠️ File not found!");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        saveText("questions.txt", "What is Java?;1) Language;2) OS;3) Browser;4) None;1");
+        readText("questions.txt");
+    }
+}
