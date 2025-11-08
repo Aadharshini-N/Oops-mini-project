@@ -1,0 +1,44 @@
+package aaa;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.rmi.Naming;
+
+public class Module5 extends JFrame {
+    private JTextField usernameField;
+    private JButton submitButton;
+
+    public Module5() {
+        setTitle("Online Exam Portal");
+        setLayout(new FlowLayout());
+
+        add(new JLabel("Enter Username:"));
+        usernameField = new JTextField(15);
+        add(usernameField);
+
+        submitButton = new JButton("Submit Result");
+        add(submitButton);
+
+        submitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    ExamRemote service = (ExamRemote) Naming.lookup("rmi://localhost/ExamService");
+                    String result = service.saveResult(usernameField.getText(), 90);
+                    JOptionPane.showMessageDialog(null, result);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        setSize(300, 150);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        new Module5();
+    }
+}
+
