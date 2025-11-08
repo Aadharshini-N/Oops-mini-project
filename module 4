@@ -58,6 +58,28 @@ public class Module4 extends UnicastRemoteObject implements ExamRemote {
     }
 }
 
+
+package aaa;
+
+import java.rmi.Naming;
+
+public class Module4Client {
+    public static void main(String[] args) {
+        try {
+            // Lookup the remote object from registry
+            ExamRemote examService = (ExamRemote) Naming.lookup("rmi://localhost:1099/ExamService");
+
+            // Call the remote method
+            String response = examService.saveResult("Aadhu", 95);
+            System.out.println(response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
 // ✅ Remote interface
 interface ExamRemote extends Remote {
     String saveResult(String username, int score) throws RemoteException;
