@@ -1,0 +1,64 @@
+package aaa;
+
+import java.util.ArrayList;
+
+abstract class User {
+    protected String username;
+    protected String password;
+
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public abstract void displayInfo();
+}
+
+class Student extends User {
+    private int studentId;
+
+    public Student(String username, String password, int studentId) {
+        super(username, password);
+        this.studentId = studentId;
+    }
+
+    @Override
+    public void displayInfo() {
+        System.out.println("Student: " + username + " (ID: " + studentId + ")");
+    }
+}
+
+class Question {
+    private String questionText;
+    private String[] options;
+    private int correctAnswer;
+
+    public Question(String questionText, String[] options, int correctAnswer) {
+        this.questionText = questionText;
+        this.options = options;
+        this.correctAnswer = correctAnswer;
+    }
+
+    public boolean checkAnswer(int answer) {
+        return answer == correctAnswer;
+    }
+
+    public void display() {
+        System.out.println(questionText);
+        for (int i = 0; i < options.length; i++) {
+            System.out.println((i + 1) + ". " + options[i]);
+        }
+    }
+}
+
+class Exam {
+    private ArrayList<Question> questions = new ArrayList<>();
+
+    public void addQuestion(Question q) {
+        questions.add(q);
+    }
+
+    public ArrayList<Question> getQuestions() {
+        return questions;
+    }
+}
